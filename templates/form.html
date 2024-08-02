@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Response Form</title>
+    
+    <link rel="stylesheet" href="/static/css/tailwind.output.css">
+    <script>
+        async function deleteObject(objectId){
+            window.location.href = '/';
+            const response = await fetch(`delete_chat/${objectId}`, {
+            method: 'DELETE'
+            })
+            
+        }
+
+        function enableButton() {
+            const emailbutton=document.getElementById("emailsubmit");
+            emailbutton.disabled = false;
+        }
+
+        function disableButton() {
+            const emailbutton=document.getElementById("emailsubmit");
+            emailbutton.disabled = true;
+        }
+        async function submitForm(event) {
+            event.preventDefault();
+            disableButton();
+            const formData = new FormData(event.target);
+            
+            document.getElementById("loader").style.display = "block";
+            const mainbutton= document.getElementById('button-wrapper');
+            mainbutton.classList.remove('block');
+            mainbutton.classList.add('hidden');
+
+            const response = await fetch(event.target.action, {
+                method: 'POST',
+                body: formData
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+                document.getElementById("loader").style.display = "hidden";
+                mainbutton.classList.remove('hidden');
+                mainbutton.classList.add('block');
+                
+                window.location.href = `/chathistory-details/${data.chat_id}`;
+                enableButton();
+                
+            } else {
+                // handle error
+                enableButton();
+            }
+        }
+        function toggleChatHistory() {
+            const chatHistory = document.getElementById('chat-history');
+            if (chatHistory.classList.contains('max-md:hidden')) {
+                chatHistory.classList.remove('max-md:hidden');
+            } else {
+                chatHistory.classList.add('max-md:hidden');
+            }
+        }
+        function showDeleteView(id){
+            const deleteView = document.getElementById(id);
+            if (deleteView.classList.contains('hidden')){
+                deleteView.classList.remove('hidden');
+            } else{
+                deleteView.classList.add('hidden');
+            }
+        }
+
+        function copyText(content){
+            const text = document.getElementById(content).textContent;
+            navigator.clipboard.writeText(text);
+            alert('copied successfully')
+        }
+
+        function deleteItem(item){
+    
+            const itemId = document.getElementById(item).classList.add('hidden')
+        }
+    </script>
+    <style>
+        ::-webkit-scrollbar {
+            width: 1px;
+            /* border-radius: 10px; */
+        }
+
+        ::-webkit-scrollbar-track {
+            /* border-radius: 10px; */
+            /* border: 1px solid #cacaca; */
+            background-color: #ffffff00;
+            box-shadow: inset 0 0 6px rgba(255, 255, 255, 0.3);
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body  >
+    <img  class="bg-cover bg-no-repeat w-full h-screen fixed -z-10 text-white" src="/static/assets/background.png" alt="">
+    <div class="bg-opacity-50 min-h-screen">
+        <div class="text-black z-20 p-3 md:w-[70%] header-radius md:absolute right-0 backdrop-blur-2xl" style=" background-color: rgba(255, 255, 255, 0.404)">
+            <header class="ml-4 text-gray-600 text-[42px]"><a href="/">Sapara</a> <span class="text-gray-600 text-[22px]">powered by groq</span>
+                <button class="header-hamburger absolute right-2 top-7 md:hidden p-2 rounded-md focus:outline-none" onclick="toggleChatHistory()">
+                    <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path>
+                    </svg>
+                </button>
+            </header>
+        </div>
+        
+        <div class="flex items-center gap-6 max-md:flex-col">
+            <div id="chat-history" class="xl:w-[30vw] max-md:absolute max-md:hidden header-mob-menu top-0 left-0 backdrop-blur-2xl z-40 h-screen p-4 ">
+                <div class="w-[95%] h-[70vh] m-2 rounded-2xl p-4 bg-white bg-opacity-60">
+                    <div class="mt-10 flex justify-between items-center">
+                        <h2 class="text-[1.5rem] font-medium inline font-sans">Chat History</h2>
+                        <img class="w-14 h-6" src="/static/assets/chathistory.png" alt="">
+                    </div>
+                    
+                    {% if Titles %}
+                    <ul class="flex flex-col gap-2 mt-6 h-[50vh] overflow-y-scroll">
+                        {% for title in Titles %}
+                            <li class="bg-white rounded-xl p-3 text-[12px] flex justify-between shadow-md">
+                                <a href="/chathistory-details/{{ title['id'] }}">{{ title['value'][0:25] }}...</a> 
+                                    <button onclick="showDeleteView('{{ title['id'] }}-delete-view')" class="more-btn w-6 h-6">
+                                        <img src="/static/assets/more.svg" alt="more.svg" class="w-6 h-6">
+                                    </button>
+                                
+                            </li>
+                            <div id="{{ title['id'] }}-delete-view" class="w-36 bg-transparent backdrop-blur-2xl hidden relative -top-8 -right-1 rounded-lg p-4 shadow-md">
+                                <div class="h-[12vh] w-[4vw] flex flex-wrap gap-2">
+                                    <button onclick="deleteObject('{{ title['id'] | escape }}')">Delete</button>
+                                    <button>
+                                        <a href="/chathistory-details/{{ title['id'] }}">View</a>
+                                    </button>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </ul>
+                    {% endif %}
+                
+                    {% if sortedtitles %}
+                    <ul class="flex flex-col gap-2 mt-6 h-[50vh] overflow-y-scroll">
+                        <li class="bg-white rounded-xl p-3 text-[12px] flex justify-between shadow-md">
+                            <a href="/chathistory-details/{{ sortedtitles['id'] }}">{{ sortedtitles['value'][0:25] }}...</a> 
+                                <button onclick="showDeleteView('{{ sortedtitles['id'] }}-delete-view')" class="w-6 h-6">
+                                    <img src="/static/assets/more.svg" alt="more.svg" class="w-6 h-6">
+                                </button>
+                            
+                        </li>
+                        <div id="{{ sortedtitles['id'] }}-delete-view" class="w-36 bg-transparent backdrop-blur-2xl hidden relative -top-8 -right-1 rounded-lg p-4 shadow-md">
+                            <div class="h-[12vh] w-[4vw] flex flex-wrap gap-2">
+                                <button onclick="deleteObject('{{ sortedtitles['id'] | escape }}')">Delete</button>
+                                <button>
+                                    <a href="/chathistory-details/{{ sortedtitles['id'] }}">View</a>
+                                </button>
+                            </div>
+                        </div>
+                    </ul>
+                    {% endif %}
+                    
+                </div>
+
+                
+                <form action="/get_titles" method="post" class="mt-24">
+                    <div class="input__container">
+                        <div class="shadow__input"></div>
+                        <button type="submit" class="input__button__shadow">
+                            <svg fill="none" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" height="20px" width="20px">
+                            <path d="M4 9a5 5 0 1110 0A5 5 0 014 9zm5-7a7 7 0 104.2 12.6.999.999 0 00.093.107l3 3a1 1 0 001.414-1.414l-3-3a.999.999 0 00-.107-.093A7 7 0 009 2z" fill-rule="evenodd" fill="#17202A"></path>
+                            </svg>
+                        </button>
+                        <input type="text" name="title" id="title" class="input__search" placeholder="What do you want to search?" required>
+                    </div>
+                </form>
+
+            </div>
+
+            <div class="h-[75vh] w-full relative overflow-y-scroll mt-6">
+                {%if values%}
+                <div>
+                    <div id="generated-notification">
+                        <div class="z-20 w-full flex items-center justify-center max-md:justify-end">
+                            <div class="bg-white h-32 p-4 flex gap-2 max-w-md fixed top-24 shadow-xl">
+                                <div class="relative -left-4 w-1 h-32 -top-4 bg-[#42BE65]"></div>
+                                <div class="w-6 h-6">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--!Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path fill="#42be65" d="M256 512A256 256 0 1 0 256 0a256 256 0 1 0 0 512zM216 336l24 0 0-64-24 0c-13.3 0-24-10.7-24-24s10.7-24 24-24l48 0c13.3 0 24 10.7 24 24l0 88 8 0c13.3 0 24 10.7 24 24s-10.7 24-24 24l-80 0c-13.3 0-24-10.7-24-24s10.7-24 24-24zm40-208a32 32 0 1 1 0 64 32 32 0 1 1 0-64z"/></svg>
+                                </div>
+                                <div>
+                                    <h2 class="font-semibold font-sans text-gray-800">Username Generated</h2>
+                                    <p class="font-light font-sans text-gray-600">use the following username to search chat history</p>
+                                    <div class="bg-gray-300 p-2 rounded-lg mt-2 flex justify-between">
+                                        <h3 id="generated-username" class="font-bold font-sans text-gray-900">{{ai_user}}</h3>
+                                        <button onclick="copyText(content='generated-username')" class="w-5 h-5 cursor-pointer flex justify-center items-center active:rounded-full active:bg-gray-400">
+                                            <svg class="w-3 h-3" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--!Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path fill="#ffa500" d="M208 0L332.1 0c12.7 0 24.9 5.1 33.9 14.1l67.9 67.9c9 9 14.1 21.2 14.1 33.9L448 336c0 26.5-21.5 48-48 48l-192 0c-26.5 0-48-21.5-48-48l0-288c0-26.5 21.5-48 48-48zM48 128l80 0 0 64-64 0 0 256 192 0 0-32 64 0 0 48c0 26.5-21.5 48-48 48L48 512c-26.5 0-48-21.5-48-48L0 176c0-26.5 21.5-48 48-48z"/></svg>
+                                        </button>
+                                    </div>
+                                </div>
+                                <botton onclick="deleteItem(item='generated-notification')" class="w-6 h-6 rounded-3xl cursor-pointer flex items-center justify-center active:bg-gray-300">
+                                    <svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><!--!Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path fill="#555555" d="M342.6 150.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L192 210.7 86.6 105.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L146.7 256 41.4 361.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L192 301.3 297.4 406.6c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L237.3 256 342.6 150.6z"/></svg>
+                                </botton>
+                        </div>
+                        </div>
+                    </div>
+                    
+                    <div class=" max-w-md ml-auto md:max-w-2xl h-5 mr-5 flex justify-end">
+                        <div class="hexagon p-[4px]  h-10 w-20 rounded-se-xl rounded-ss-xl">
+                            <div class=" bg-white rounded-lg p-2 h-8 flex items-center justify-center ">
+                                <h2>You</h2>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="hexagon p-2 pr-4 text-gray-700 max-w-md ml-auto rounded-ss-xl rounded-es-xl rounded-ee-xl shadow-md md:max-w-2xl m-5 hover:shadow-2xl transition-all duration-500 ease-in-out z-10">
+                        
+                        
+                        <div class="md:flex bg-white rounded-lg">
+                            <div class="p-8">
+                                <p class="uppercase tracking-wide text-sm text-indigo-500 font-semibold">{{ai_submitted_text | safe}}</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="hexagon max-lg:ml-3 p-[2px] w-20 flex items-center justify-center rounded-ss-lg rounded-se-lg">
+                        <div class=" bg-white rounded-xl w-full p-2 m-2 flex justify-center items-center">
+                            <h2>AI</h2>
+                        </div>
+                    </div>
+                    
+                    <div class="hexagon rounded-se-xl rounded-es-xl rounded-ee-xl p-4 max-lg:pl-1 max-lg:ml-3 flex gap-4 w-11/12 max-lg:flex-col">
+                        
+                        <div class="bg-white text-white max-w-md mr-auto rounded-lg shadow-md overflow-hidden md:max-w-2xl m-5 hover:shadow-2xl hover:bg-black transition-all duration-500 ease-in-out">
+                            <div class="md:flex">
+                                <div class="p-8">
+                                    <div class="relative flex justify-end w-full">
+                                        <button onclick="copyText(content='ai_content')" class="w-5 h-5 cursor-pointer flex justify-center items-center active:rounded-full active:bg-gray-400">
+                                            <svg class="w-3 h-3" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--!Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path fill="#555555" d="M208 0L332.1 0c12.7 0 24.9 5.1 33.9 14.1l67.9 67.9c9 9 14.1 21.2 14.1 33.9L448 336c0 26.5-21.5 48-48 48l-192 0c-26.5 0-48-21.5-48-48l0-288c0-26.5 21.5-48 48-48zM48 128l80 0 0 64-64 0 0 256 192 0 0-32 64 0 0 48c0 26.5-21.5 48-48 48L48 512c-26.5 0-48-21.5-48-48L0 176c0-26.5 21.5-48 48-48z"/></svg>
+                                        </button>
+                                    </div>
+                                    <p id="ai_content" class="hidden">{{ai_email}}</p>
+                                    <p class="uppercase tracking-wide text-sm text-indigo-500 font-semibold">{{ai_response_email | safe}}</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div>
+                            <div class="h-14 rounded-lg w-auto flex flex-col justify-center gap-1 p-2 pb-3">
+                                <h4 class="text-semibold text-gray-700 font-sans">
+                                    Category:
+                                </h4>
+                                <p class="bg-[#e634a762] text-center w-[80%] rounded-lg shadow-2xl">{{ai_response_category}}</p>
+                            </div>
+
+                            
+                            <div class="md:max-w-2xl m-5 overflow-hidden bg-white border border-gray-200 rounded-xl shadow-md">
+                                
+                                <div class="p-6">
+                                    <h3 class="text-lg font-semibold text-gray-800">Research Data:</h3>
+                                    <div class="flex flex-col gap-2">{{ai_response_researchdata | safe}}</div>
+                                </div>
+                                
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {%endif%}
+
+                
+            </div>
+            
+        </div>
+        <form action="/process-text/" method="post" onsubmit="submitForm(event)" style="background-color: rgba(255, 255, 255, 0.6);" class="backdrop-blur-xl absolute bottom-5 left-96 max-md:left-4 max-md:w-11/12 rounded-full flex items-center w-auto">
+            <!-- <input type="text" id="text" name="text" required> -->
+            <textarea id="text" name="text" rows="1" placeholder="Dear Sir, ....." class="bg-transparent w-[60vw] max-md:w-[90vw] text-[#555555] placeholder:text-[#000000] placeholder:opacity-50 placeholder:pt-0 border border-transparent col-span-6 resize-none outline-none rounded-full h-12 p-3 duration-300 focus:border-transparent" required></textarea>
+            <div id="button-wrapper" class="block">
+                <button id="emailsubmit" type="submit" class="p-3 rounded-3xl bg-[rgba(255,255,255,0.2)] shadow-xl">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" viewBox="0 0 512 512"><!--!Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path fill="#ffffff" d="M416 208c0 45.9-14.9 88.3-40 122.7L502.6 457.4c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L330.7 376c-34.4 25.2-76.8 40-122.7 40C93.1 416 0 322.9 0 208S93.1 0 208 0S416 93.1 416 208zM208 352a144 144 0 1 0 0-288 144 144 0 1 0 0 288z"/></svg>
+                </button>
+            </div>
+            <div class="hidden" id="loader">
+                <div class="flex flex-row gap-2">
+                    <div class="w-2 h-2 rounded-full bg-blue-700 animate-bounce [animation-delay:.7s]"></div>
+                    <div class="w-2 h-2 rounded-full bg-blue-700 animate-bounce [animation-delay:.3s]"></div>
+                    <div class="w-2 h-2 rounded-full bg-blue-700 animate-bounce [animation-delay:.7s]"></div>
+                </div>
+            </div>
+        </form>
+    </div>
+</body>
+</html>

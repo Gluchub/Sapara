@@ -1,0 +1,12 @@
+# Ignore the virtual environment folder
+groq
+
+# Ignore other specific files
+.env
+*.log
+
+# Ignore any temporary files or directories
+__pycache__
+*.pyc
+*.pyo
+*.pyd
