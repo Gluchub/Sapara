@@ -134,7 +134,5 @@ async def process_text(request: Request, text: str = Form(...)):
     
     return JSONResponse(status_code=200, content={"chat_id": chat_id})
 
-if __name__ == "__main__":
-    import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=8000, reload=True)
+
 
