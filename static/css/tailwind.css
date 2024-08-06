@@ -2,6 +2,15 @@
 @tailwind components;
 @tailwind utilities;
 
+
+@media (max-width: 768px) {
+  body {
+    background-attachment: scroll; /* Allows background to scroll with content on small screens */
+    background-size: auto; /* Adjusts size if needed for smaller screens */
+  }
+}
+
+
 .header-radius{
     border-top-left-radius: 36px; 
     border-bottom-left-radius: 36px;

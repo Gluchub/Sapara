@@ -100,10 +100,10 @@
     </style>
 </head>
 <body  >
-    <img  class="bg-cover bg-no-repeat w-full h-screen fixed -z-10 text-white" src="/static/assets/background.png" alt="">
+    <img class="bg-cover bg-no-repeat w-full h-screen fixed -z-10 object-cover text-white" src="/static/assets/background.png" alt="">
     <div class="bg-opacity-50 min-h-screen">
         <div class="text-black z-20 p-3 md:w-[70%] header-radius md:absolute right-0 backdrop-blur-2xl" style=" background-color: rgba(255, 255, 255, 0.404)">
-            <header class="ml-4 text-gray-600 text-[42px]"><a href="/">Sapara</a> <span class="text-gray-600 text-[22px]">powered by groq</span>
+            <header class="ml-4 text-gray-600 text-[42px] max-lg:text-[36px]"><a href="/">Sapara</a> <span class="text-gray-600 text-[22px] max-lg:text-[12px]">powered by groq</span>
                 <button class="header-hamburger absolute right-2 top-7 md:hidden p-2 rounded-md focus:outline-none" onclick="toggleChatHistory()">
                     <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path>
@@ -184,8 +184,8 @@
                 <div>
                     <div id="generated-notification">
                         <div class="z-20 w-full flex items-center justify-center max-md:justify-end">
-                            <div class="bg-white h-32 p-4 flex gap-2 max-w-md fixed top-24 shadow-xl">
-                                <div class="relative -left-4 w-1 h-32 -top-4 bg-[#42BE65]"></div>
+                            <div class="bg-white h-32 max-md:h-40 p-4 flex gap-2 max-w-md fixed top-24 shadow-xl">
+                                <div class="relative -left-4 w-1 h-32 max-md:h-40 -top-4 bg-[#42BE65]"></div>
                                 <div class="w-6 h-6">
                                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--!Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path fill="#42be65" d="M256 512A256 256 0 1 0 256 0a256 256 0 1 0 0 512zM216 336l24 0 0-64-24 0c-13.3 0-24-10.7-24-24s10.7-24 24-24l48 0c13.3 0 24 10.7 24 24l0 88 8 0c13.3 0 24 10.7 24 24s-10.7 24-24 24l-80 0c-13.3 0-24-10.7-24-24s10.7-24 24-24zm40-208a32 32 0 1 1 0 64 32 32 0 1 1 0-64z"/></svg>
                                 </div>
@@ -193,7 +193,7 @@
                                     <h2 class="font-semibold font-sans text-gray-800">Username Generated</h2>
                                     <p class="font-light font-sans text-gray-600">use the following username to search chat history</p>
                                     <div class="bg-gray-300 p-2 rounded-lg mt-2 flex justify-between">
-                                        <h3 id="generated-username" class="font-bold font-sans text-gray-900">{{ai_user}}</h3>
+                                        <h3 id="generated-username" class="font-bold font-sans text-gray-900 max-md:text-[12px]">{{ai_user}}</h3>
                                         <button onclick="copyText(content='generated-username')" class="w-5 h-5 cursor-pointer flex justify-center items-center active:rounded-full active:bg-gray-400">
                                             <svg class="w-3 h-3" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--!Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path fill="#ffa500" d="M208 0L332.1 0c12.7 0 24.9 5.1 33.9 14.1l67.9 67.9c9 9 14.1 21.2 14.1 33.9L448 336c0 26.5-21.5 48-48 48l-192 0c-26.5 0-48-21.5-48-48l0-288c0-26.5 21.5-48 48-48zM48 128l80 0 0 64-64 0 0 256 192 0 0-32 64 0 0 48c0 26.5-21.5 48-48 48L48 512c-26.5 0-48-21.5-48-48L0 176c0-26.5 21.5-48 48-48z"/></svg>
                                         </button>

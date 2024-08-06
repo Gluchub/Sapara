@@ -995,6 +995,14 @@ video {
   height: 100vh;
 }
 
+.h-96 {
+  height: 24rem;
+}
+
+.h-\[40vh\] {
+  height: 40vh;
+}
+
 .min-h-screen {
   min-height: 100vh;
 }
@@ -1553,6 +1561,11 @@ video {
   background-repeat: no-repeat;
 }
 
+.object-cover {
+  -o-object-fit: cover;
+     object-fit: cover;
+}
+
 .p-1 {
   padding: 0.25rem;
 }
@@ -1957,6 +1970,15 @@ video {
   animation-delay: .7s;
 }
 
+@media (max-width: 768px) {
+  body {
+    background-attachment: scroll;
+    /* Allows background to scroll with content on small screens */
+    background-size: auto;
+    /* Adjusts size if needed for smaller screens */
+  }
+}
+
 .header-radius{
   border-top-left-radius: 36px;
   border-bottom-left-radius: 36px;
@@ -2137,6 +2159,14 @@ video {
   .max-lg\:pl-1 {
     padding-left: 0.25rem;
   }
+
+  .max-lg\:text-\[36px\] {
+    font-size: 36px;
+  }
+
+  .max-lg\:text-\[12px\] {
+    font-size: 12px;
+  }
 }
 
 @media not all and (min-width: 768px) {
@@ -2150,6 +2180,18 @@ video {
 
   .max-md\:hidden {
     display: none;
+  }
+
+  .max-md\:h-96 {
+    height: 24rem;
+  }
+
+  .max-md\:h-\[40vh\] {
+    height: 40vh;
+  }
+
+  .max-md\:h-40 {
+    height: 10rem;
   }
 
   .max-md\:w-11\/12 {
@@ -2166,6 +2208,10 @@ video {
 
   .max-md\:justify-end {
     justify-content: flex-end;
+  }
+
+  .max-md\:text-\[12px\] {
+    font-size: 12px;
   }
 }
 
